@@ -41,6 +41,8 @@ Configure the button with `INPUT_PULLUP`. Read it every loop with `digitalRead()
 - [ ] The LED is on only while the button is held down
 - [ ] Pressed reads `LOW` and this is reflected correctly in the condition
 
+**Finished Task 1** https://wokwi.com/projects/472117696878376961
+
 ---
 
 ## Task 2 - Pull-Down Comparison Using `if / else`
@@ -83,6 +85,8 @@ Configure the button with `INPUT_PULLDOWN`. This time use one `if / else` statem
 - [ ] Pressed reads `HIGH` (opposite of Task 1) and the condition matches
 - [ ] A single `if / else` replaces the two separate `if` statements from Task 1
 
+**Finished task 2** https://wokwi.com/projects/472142277149305857
+
 ---
 
 ## Task 3 - PIR Motion Alert Using Boolean Logic
@@ -118,6 +122,8 @@ Declare `bool afterHours` near the top of your program and set it to `true` or `
 - [ ] The buzzer only sounds when motion **and** `afterHours` are both true
 - [ ] Changing `afterHours` to `false` in code stops the buzzer even with motion present
 - [ ] (Challenge) `!alarmEnabled` correctly overrides everything else when the system is disabled
+
+**Finished task 3** https://wokwi.com/projects/472391424621680641
 
 ---
 
@@ -165,6 +171,8 @@ Read the potentiometer with `analogRead()` (0–4095) and convert it to a 0–25
 - [ ] `map()` correctly converts the 0–4095 reading into the 0–255 PWM range
 - [ ] The warning LED turns on only when brightness is below the threshold
 
+**Finished task 4** https://wokwi.com/projects/472392743933831169
+
 ---
 
 ## Task 5 - Comfort Monitor Using `if / else if / else`
@@ -201,6 +209,8 @@ Read the temperature each loop with the DHT library (read no more than once ever
 - [ ] A failed sensor read is detected with `isnan()` before the temperature is classified
 - [ ] Exactly one of the three labels prints per reading, never more than one
 - [ ] Conditions are ordered so a later, broader condition can't accidentally catch a case meant for an earlier one
+
+**Finished task 5** https://wokwi.com/projects/472394873536330753
 
 ---
 
@@ -242,6 +252,8 @@ Wokwi link: https://wokwi.com/projects/471661119539001345
 - [ ] The PIR sensor is only checked when `systemArmed` is `true` (nested inside that condition)
 - [ ] The buzzer stops immediately when the system is disarmed, even mid-alarm
 
+**FInished Task 6** https://wokwi.com/projects/472400499410393089
+
 ---
 
 ## Task 7 - Spot-the-Bug Worksheet (Extension)
@@ -258,22 +270,28 @@ void setup() {
 void loop() {
   int buttonState = digitalRead(BUTTON_PIN);
 
-  if (buttonState == HIGH) {
+  if (buttonState == LOW) {
     digitalWrite(LED_PIN, HIGH);
     Serial.println("Button pressed");
   }
 }
+
+
 ```
+**Fixed**
+
 <details><summary>Answer</summary>With <code>INPUT_PULLUP</code>, a press reads <code>LOW</code>, not <code>HIGH</code> — the condition has the logic backwards, so the LED lights when the button is released instead of pressed.</details>
 
 **Round 2:**
 ```cpp
 void loop() {
   int potValue = analogRead(potPin);
-  int brightness = map(potValue, 0, 255, 0, 4095);
+  int brightness = map(potValue, 0, 4095, 0, 255);
   analogWrite(ledPin, brightness);
 }
 ```
+**Fixed**
+
 <details><summary>Answer</summary>The <code>map()</code> arguments are reversed — the potentiometer reading is 0–4095 and needs to map <em>into</em> 0–255 for <code>analogWrite()</code>. It should be <code>map(potValue, 0, 4095, 0, 255)</code>.</details>
 
 **Round 3:**
@@ -281,11 +299,13 @@ void loop() {
 void loop() {
   int motionDetected = digitalRead(PIR_PIN);
 
-  if (motionDetected = HIGH) {
+  if (motionDetected == HIGH) {
     digitalWrite(BUZZER_PIN, HIGH);
   }
 }
 ```
+**Fixed**
+
 <details><summary>Answer</summary><code>=</code> is assignment, not comparison — this always sets the condition true regardless of the sensor. It should be <code>if (motionDetected == HIGH)</code>.</details>
 
 **Round 4:**
@@ -293,13 +313,16 @@ void loop() {
 void loop() {
   float humidity = dht.readHumidity();
   float temperatureC = dht.readTemperature();
-
+  if (isnan(humidity) || isnan(temperatureC)) {
+    Serial.println("Failed to read from DHT sensor!");
+  }
   Serial.print("Temp: ");
   Serial.println(temperatureC);
-
-  delay(100);
+  
+  delay(2000);
 }
 ```
+**Fixed**
 <details><summary>Answer</summary>Two problems: there's no <code>isnan()</code> check for a failed read, and the DHT22 is polled every 100 ms — it can only be read reliably about once every 2 seconds, so this will frequently return stale or invalid data.</details>
 
 **Round 5:**
@@ -309,28 +332,31 @@ void loop() {
 
   if (redButton == LOW) {
     digitalWrite(redLED, HIGH);
-  } else if (redButton == LOW) {
+  } else if (greenButton == LOW) {
     digitalWrite(greenLED, HIGH);
   }
 }
 ```
+**Fixed**
 <details><summary>Answer</summary>Both branches check the exact same condition (<code>redButton == LOW</code>) — the second, unreachable branch was meant to check a different variable, e.g. <code>greenButton == LOW</code>.</details>
 
 **Round 6:**
 ```cpp
 bool systemArmed = false;
+int lastButtonState = HIGH;
 
 void loop() {
   int buttonState = digitalRead(ARM_BUTTON_PIN);
 
-  if (buttonState == LOW) {
+  if (buttonState == LOW && lastButtonState == HIGH) {
     systemArmed = !systemArmed;
   }
-
+  lastButtonState = buttonState;
   Serial.println(systemArmed);
   delay(10);
 }
 ```
+**Fixed**
 <details><summary>Answer</summary>There's no edge detection (no <code>lastButtonState</code> comparison) — while the button is held down, this toggles <code>systemArmed</code> on almost every single loop iteration (every ~10 ms), instead of once per physical press.</details>
 
 **Round 7:**
@@ -341,11 +367,12 @@ void loop() {
 
   if (motionDetected == HIGH) {
     if (afterHours) {
+      digitalWrite(BUZZER_PIN, HIGH);
     }
-    digitalWrite(BUZZER_PIN, HIGH);
   }
 }
 ```
+**Fixed**
 <details><summary>Answer</summary>The nested <code>if (afterHours)</code> block is empty — <code>digitalWrite(BUZZER_PIN, HIGH)</code> sits outside it, so the buzzer fires on motion alone and <code>afterHours</code> has no effect at all. The buzzer line needs to move inside the nested block.</details>
 
 **Self-check:** How many did you spot correctly before looking?
@@ -417,6 +444,8 @@ flowchart LR
 - [ ] The DHT22 read is guarded with `isnan()` and never polled faster than every 2 seconds
 - [ ] Temperature classification uses `if / else if / else` with conditions ordered correctly (narrowest first)
 
+**Finished** https://wokwi.com/projects/472489745688589313
+
 ---
 
 ## Questions
@@ -424,34 +453,34 @@ flowchart LR
 Answer these in your own words before moving on:
 1. Why does `INPUT_PULLUP` read `LOW` when pressed, while `INPUT_PULLDOWN` reads `HIGH` when pressed?
   ```
-
+  INPUT_PULLUP is HIGH by default, but when you press the button it connects to GND, making it LOW, INPUT_PULLDOWN is LOW by default, but when you press the button it connects to VCC, making it HIGH
 
   ```
 2. What's the practical difference between `if`, `if / else`, and `if / else if / else` in terms of how many branches can run per loop?
   ```
-
+  In every language, if and else are used to work when a condition is fulfilled. You use else when something is the opposite of the if, so it gives two conditions. else if is used when there are multiple conditions that need to be identified, so the program won't have any unexpected answers. These conditions can also be nested inside each other when needed.
 
   ```
 3. Why does `&&` require both conditions to be true, while `||` only needs one? Give a real-world example of each from this activity.
   ```
-
+  && is used when your program needs two specific values to be true in order for it to run. If one is false and the other is true, it won't run, only if they are both true. For example, the buzzer activates when motion is detected AND it is after hours. || is used when you have two conditions and at least one of them needs to be true. For example, the buzzer could activate if motion is detected OR it is after hours.
 
   ```
 4. In Task 6/8, why is edge detection (comparing to `lastButtonState`) necessary instead of just checking `if (buttonState == LOW)` on its own?
 
   ```
-
+ We use the lastButtonState to save the previous button state, while if we use buttonState == LOW, it will just read as LOW. The lastButtonState lets us know when the button has changed from HIGH to LOW, so it only detects a new press instead of repeatedly detecting the button while it is held.
 
   ```
 5. Why must the most specific condition be checked first in an `if / else if / else` chain?
   ```
-
+  Because the program checks the condition from top to bottom, so checking the most specific condition first ensures the correct condition is chosen and prevents an unexpected answer.
 
   ```
 
 6. Why does the DHT22 need to be read with `millis()`-style timing instead of a short `delay()`, unlike a button or PIR sensor?
   ```
-
+    The DHT22 needs to be read after a certain amount of time, so we use millis() to remember when it was last read and check when it is time to read it again. Unlike delay() millis() doesn't stop the board from doing other things while waiting to read the DHT22.
 
   ```
 
