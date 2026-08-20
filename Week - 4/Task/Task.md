@@ -67,42 +67,39 @@ flowchart LR
 >
 > Wokwi Link : https://wokwi.com/projects/472676603111416833
 >
-
+**Finished** https://wokwi.com/projects/472831097278473217
 ### Questions
 
 - Why must `update_buzzer()` run on every pass of `loop()`, rather than only inside the `if` block that starts the buzzer?
   ```
-
-
+ Because update_buzzer() uses millis() to check when the buzzer needs to stop. This allows only the buzzer to stop without stopping the whole program.
   ```
 
 - What would happen to the PIR and button readings if `update_buzzer()`'s timing check used `delay()` instead of comparing against `millis()`?
   ```
-
-
-  ```
+  delay() is used for simple projects to stop the program for a period of time. It is not useful in more complex projects becasue it would stop the PIR and button readings while the delay is happening. millis() allows the program to keep running and reading the PIR and button while timing the buzzer.
 
 - Why does `buzzerStartTime` need to be `unsigned long` instead of `int` or a signed `long`?
   ```
-
+ 
+ unsigned long stores only positive numbers, while int and signed long can store both negative and positive numbers. buzzerStartTime should only need positive numbers because it stores a time value from millis().
 
   ```
 
 - In `if (motionDetected || buttonPressed)`, what happens on a pass where both are `true` at once?
   ```
-
+It will still continue because both of them are true. The || (OR) condition is true if at least one of the conditions is true, so the code inside the if statement will run.
 
   ```
 
 - Why is it useful for `read_pir()` to return `bool` rather than calling `digitalRead()` directly inside `loop()`?
   ```
-
-
+It is useful because, first, it returns the value, and second, you can use the funstion in the loop without writing a long statement. This makes the code more organised, so the loop() acts like a manager.
   ```
 
 - Why does `update_display()` only get called when the status text changes, rather than on every pass of `loop()` like `update_buzzer()` does?
   ```
-
+Because update_display() is just used when the OLED needs to show text. Not like update_buzzer(), where it uses millis() so it won't stop the program when it needs to stop.
 
   ```
 
