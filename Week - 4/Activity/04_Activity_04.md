@@ -47,7 +47,7 @@ Write a function `blink_led(int pin, int times, int onTime)` that blinks the LED
 - [ ] `loop()` only calls `blink_led()`; it contains no raw `digitalWrite`/`delay` of its own
 - [ ] The red, green, and blue LEDs are all driven by the same function, and each one visibly blinks at a different speed from the other two
 
-**Finished Task 1** https://wokwi.com/projects/473044765896394753
+**Finished Task 1:** https://wokwi.com/projects/473044765896394753
 
 ---
 
@@ -96,7 +96,7 @@ Write `read_pir()` and `read_button()` as functions returning `bool`. In `loop()
 - [ ] The LED turns off only when neither input is active, and updates immediately every pass
 - [ ] The status is only printed to Serial at most once every `reportInterval` (500 ms), using `millis()` — not on every pass, and not via `delay()`
 
-**Finished Task 2** https://wokwi.com/projects/473047440176693249
+**Finished Task 2:** https://wokwi.com/projects/473047440176693249
 
 ---
 
@@ -144,6 +144,8 @@ Declare `bool afterHours` near the top of the program, starting at `false`. Rath
 - [ ] `buzzerStartTime` is recorded the moment the buzzer turns on, and is declared `unsigned long`
 - [ ] The buzzer doesn't start a new pulse on top of one that's already running
 
+**Finished task 3:** https://wokwi.com/projects/473124487934949377
+
 ---
 
 ## Task 4 - Boolean OR — Dual-Input Alert
@@ -190,6 +192,8 @@ Read the raw button pin into a `bool rawButtonPressed` at the top of `loop()`. D
 - [ ] The LED turns off only when neither input is active
 - [ ] The button reading is debounced using `millis()` (`lastDebounceTime` as `unsigned long`, `debounceDelay` of 300 ms), not `delay()`
 - [ ] Both sensor readings are stored in named `bool` variables before the `if`, not called twice inside it
+
+**Finished task 4:** https://wokwi.com/projects/473126166686414849
 
 ---
 
@@ -246,6 +250,8 @@ This needs **two independent `millis()` timers running at once**, not just one: 
 - [ ] All three LEDs flash together in sync on the shared `blinkInterval` timer, independent from the `testDuration` timer bounding the whole test
 - [ ] The test stops automatically once `testDuration` has elapsed, turning all three LEDs off and clearing `testRunning`- [ ] `loop()` contains no `delay()` calls anywhere, and all `millis()`-based timing variables are `unsigned long`
 
+**Finished task 5:** https://wokwi.com/projects/473129487754551297
+
 ---
 
 ## Task 6 - Non-blocking Status Display (OLED)
@@ -291,6 +297,8 @@ Set up the display as in the Week 2 resource notes: `#include <Adafruit_GFX.h>` 
 - [ ] `update_display()` ends with `display.display()`, or nothing appears on screen
 - [ ] The OLED text changes correctly between all three states: OK, motion alert, button alert
 - [ ] The screen redraws immediately when the status changes, and also at least once every `heartbeatInterval` (2000 ms) even while it stays the same, using `millis()` — not on every single pass of `loop()`, and not via `delay()`
+
+**Finished Task 6:** https://wokwi.com/projects/473131699040115713
 
 ---
 
@@ -357,6 +365,8 @@ flowchart LR
 - [ ] The alert triggers from either input using `||`, and the log message correctly names which one fired
 - [ ] The OLED status redraws when it actually changes, and at least every heartbeat interval otherwise
 
+**Finished task 7:** https://wokwi.com/projects/473137081024885761
+
 ---
 
 ## Task 8 - Spot-the-Bug Worksheet (Extension)
@@ -369,14 +379,13 @@ void loop() {
   bool motionDetected = read_pir();
   bool buttonPressed = read_button();
 
-  if (motionDetected) {
-    set_led(true);
-  } else if (motionDetected || buttonPressed) {
+ if (motionDetected || buttonPressed) {
     set_led(true);
   } else {
     set_led(false);
   }
 }
+**Fixed**
 ```
 <details><summary>Answer</summary>The second branch can never be reached in the way intended — once <code>motionDetected</code> is false (the only way to reach the <code>else if</code>), <code>motionDetected || buttonPressed</code> just collapses to checking <code>buttonPressed</code> alone. The condition should simply be <code>buttonPressed</code>.</details>
 
@@ -386,6 +395,7 @@ void start_buzzer(int duration) {
   tone(buzzerPin, buzzerFrequency);
   buzzerActive = true;
   buzzerDuration = duration;
+  buzzerStartTime = millis();
 }
 
 void update_buzzer() {
@@ -394,14 +404,17 @@ void update_buzzer() {
     buzzerActive = false;
   }
 }
+**Fixed**
 ```
 <details><summary>Answer</summary><code>start_buzzer()</code> never records <code>buzzerStartTime = millis();</code> — without it, <code>buzzerStartTime</code> stays at its old value (or 0), so <code>update_buzzer()</code>'s timing check is meaningless.</details>
 
 **Round 3:**
 ```cpp
+
+unsigned long previousMillis = 0;
+
 void loop() {
   unsigned long currentMillis = millis();
-  unsigned long previousMillis = 0;
   const long interval = 500;
 
   if (currentMillis - previousMillis >= interval) {
@@ -409,6 +422,7 @@ void loop() {
     blink_led();
   }
 }
+**Fixed**
 ```
 <details><summary>Answer</summary><code>previousMillis</code> is declared (and reset to <code>0</code>) <strong>inside</strong> <code>loop()</code>, so it loses its value the instant the function returns. Every single pass, <code>currentMillis - previousMillis</code> is computed against a fresh <code>0</code>, which is always <code>&gt;= interval</code> — so <code>blink_led()</code> fires on every pass instead of once every 500 ms. <code>previousMillis</code> needs to keep its value between calls, either by declaring it <code>static</code> inside <code>loop()</code> or as a variable outside <code>loop()</code> entirely.</details>
 
@@ -417,6 +431,8 @@ void loop() {
 bool read_pir() {
   if (digitalRead(pirPin) == HIGH) {
     return true;
+  }else{
+  return false
   }
 }
 
@@ -425,6 +441,7 @@ void loop() {
     start_buzzer(500);
   }
 }
+**Fixed**
 ```
 <details><summary>Answer</summary>There's no <code>return false;</code> for the case where the PIR sensor reads <code>LOW</code> — a function declared to return <code>bool</code> that doesn't return on every path gives an unreliable result when no motion is detected.</details>
 
@@ -434,10 +451,11 @@ void loop() {
   bool motionDetected = read_pir();
   bool afterHours = true;
 
-  if (motionDetected | afterHours) {
+  if (motionDetected || afterHours) {
     start_buzzer(500);
   }
 }
+**Fixed**
 ```
 <details><summary>Answer</summary><code>|</code> is the bitwise OR operator, not the logical OR. It happens to evaluate correctly here because both sides are already <code>bool</code>, but it's the wrong tool and can silently misbehave with non-boolean values — it should be <code>||</code>.</details>
 
@@ -450,6 +468,7 @@ Adafruit_SSD1306 display(128, 64, &Wire);
 
 void setup() {
   Wire.begin(8, 9);
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3C);
   Serial.begin(115200);
 }
 
@@ -459,6 +478,7 @@ void update_display(String status) {
   display.println(status);
   display.display();
 }
+**Fixed**
 ```
 <details><summary>Answer</summary><code>setup()</code> never calls <code>display.begin(SSD1306_SWITCHCAPVCC, 0x3C)</code> — without initialising the SSD1306 driver chip first, the display object isn't ready to receive commands, so <code>update_display()</code> will have no visible effect (or the sketch may hang/crash on some boards).</details>
 
@@ -470,37 +490,31 @@ void update_display(String status) {
 Answer these in your own words before moving on:
 
 1. Why does splitting sensor reads and actions into functions (`read_pir()`, `start_buzzer()`, etc.) make a multi-sensor program easier to extend later?
-   ```
-
-
-   ```
+ ```
+Because each function handles one specific job, making the code easier to read, manage, debug, and change later without affecting the rest of the program.
+```
 
 2. In Task 2, what would happen if `else if (buttonPressed)` were changed to a separate `if (buttonPressed)` instead? Would the priority behaviour still hold?
-   ```
-
-
-   ```
+ ```
+No, Using a separate if would remove the priority behaviour because both conditions could run. else if means only the first matching condition runs.
+ ```
 
 3. Why does `&&` (Task 3) only need one side to be false to stop the alert, while `||` (Task 4) needs both sides to be false?
-   ```
-
-
-   ```
+ ```
+Because AND needs both to be true in order to run, so if one is false , the AND condition won't work. OR only needs one to be true, so if both are false, it won't run.
+ ```
 
 4. In Task 3/7, what specifically would break if `start_buzzer()`/`update_buzzer()` were replaced with a single call to `activate_buzzer()` that used `delay(duration)` instead?
-   ```
-
-
-   ```
+```
+It would block the program while the buzzer is sounding. During the delay(duration), the PIR and button couldn't be read, other parts of the program could't run. start_buzzer() and update_buzzer() use millis() so the buzzer can run without blocking the rest of the program.
+ ```
 
 5. Why must every variable that stores a `millis()` timestamp be declared `unsigned long`, and what could go wrong if one were declared as a signed `int` instead?
-   ```
-
-
-   ```
+ ```
+unsigned long only stores positive numbers and has a much larger range than int. millis() keeps increasing, so if you used a signed int, it could reach its limit and overflow, causing the timing to behave incorrectly.
+ ```
 
 6. In Task 6/7, why does `update_display()` need a "previous status" variable to compare against, when `update_buzzer()` doesn't need anything similar?
-   ```
-
-
-   ```
+ ```
+update_display() needs previousStatus so it can know whether the status has changed, if it changed, the OLED updates
+ ```
