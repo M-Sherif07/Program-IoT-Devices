@@ -47,6 +47,8 @@ Write a function `blink_led(int pin, int times, int onTime)` that blinks the LED
 - [ ] `loop()` only calls `blink_led()`; it contains no raw `digitalWrite`/`delay` of its own
 - [ ] The red, green, and blue LEDs are all driven by the same function, and each one visibly blinks at a different speed from the other two
 
+**Finished Task 1** https://wokwi.com/projects/473044765896394753
+
 ---
 
 ## Task 2 - PIR/Button Priority Alert Using Selection
@@ -93,6 +95,8 @@ Write `read_pir()` and `read_button()` as functions returning `bool`. In `loop()
 - [ ] Triggering both inputs at the same time always shows `"Motion"`, never `"Button"`
 - [ ] The LED turns off only when neither input is active, and updates immediately every pass
 - [ ] The status is only printed to Serial at most once every `reportInterval` (500 ms), using `millis()` — not on every pass, and not via `delay()`
+
+**Finished Task 2** https://wokwi.com/projects/473047440176693249
 
 ---
 
