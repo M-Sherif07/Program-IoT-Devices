@@ -65,43 +65,41 @@ flowchart LR
 - Add a fourth "silence" button that immediately stops whatever pattern is currently playing (without disarming any zone).
 
 >
-> Wokwi Link : _(build this circuit at wokwi.com, save the project, and paste your link here)_
-
+Wokwi Link: https://wokwi.com/projects/473404382023704577 — **Finished**
 ### Questions
 
 - Why must `zonePins[]`, `zoneLedPins[]`, and `zoneArmed[]` always be read and written at the same index `i`, rather than any one of them ever drifting out of sync with the others?
   ```
-
-
+  Because the same index i represents the same zone in all three arrays. For example, index 0 is Zone 1's button, LED, and armed state. Using the same index keeps them matched so the program controls the correct LED and button for each zone.
   ```
 
 - Why does each zone button need its own entry in the debounce arrays, instead of one shared set of debounce variables covering all three?
   ```
-
+  Because that way the debounce would be specified for each zone, so that each one has its own debounce and wouldn't be one shared set that would mix them together, which could cause a problem. It also makes it easier to manage and read.
 
   ```
 
 - In `alertPatterns[NUM_ZONES][PATTERN_LENGTH]`, why does the order of the two indices matter, even though `alertPatterns[zone][step]` and `alertPatterns[step][zone]` would allocate the same total amount of memory?
   ```
-
+  Because the first index represents the zone and the second index represents the step. If switched, the order would be wrong even though the memory usage is the same, but that would still give the wrong order.
 
   ```
 
 - Why does the search for "the first armed zone" need a `for` loop that can stop as soon as it finds one, rather than checking all 3 zones unconditionally every time?
   ```
-
+  Because we only need to find the first armed zone. Once the for loop finds an armed zone, it can stop instead of checking the other zones. This makes sure the first armed zone's pattern is played.
 
   ```
 
 - What would go wrong if `updatePlayback()` used `delay()` between each pattern step instead of checking `millis()` every pass?
   ```
-
+  If updatePlayback() was using delay(), the program would stop each time the function is called. That way, the program wouldn't be functioning as intended because millis() is used to make the program keep running while other code is still running.
 
   ```
 
 - Why does `updatePlayback()` need to check the pattern index against `PATTERN_LENGTH` before reading `alertPatterns[zone][step]`?
   ```
-
+  Because the pattern is limited. If updatePlayback() hasn't checked whether patternStep has reached PATTERN_LENGTH, the program would go beyond the pattern and give an error.
 
   ```
 
