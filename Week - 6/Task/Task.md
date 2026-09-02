@@ -51,41 +51,41 @@ flowchart LR
 >
 > Wokwi Link : https://wokwi.com/projects/473961269590110209
 
+**Finished:** https://wokwi.com/projects/474038550328820737
+
 ### Questions
 
 - Why does `log_event()` need to hold the newly-built `Event` record in a temporary variable before the insertion loop, rather than writing straight into `events[event_count]` and shifting other records around it?
   ```
-
-
+  Because we do this before the insertion, we can safely hold the newly-built Event while the other events are shifted around. This keeps the events in the correct order, so for example instead of 100, 200, 113, it will be 100, 113, 200. This means when the events are printed, they will be in the correct timestamp order.
   ```
 
 - What would happen to the logged data if the PIR reading were used directly (`if (motionDetected)`) instead of edge-detected against `lastMotionState`?
   ```
-
-
+  That way it will create duplicate entries, and it will keep spamming the log with HIGH readings, which will cause a problem of spamming instead of a more manageable and cleaner way. We made it so that when the motion is detected, we would get only one log instead of spamming.
   ```
 
 - Why does `get_threshold()` need to return a sentinel value like `-1` for an unrecognised zone name, rather than just returning `0`?
   ```
-
+  This is a check to know whether the zone is found or not found. For example, if we made it 0 and the bench threshold is 0 already, it would give it to us and we wouldn't know whether this is found or not found, so the check system will just be ruined. While if we do -1, we use it as a special value to mean not found, so if a zone doesn't exist, we would know because it will return -1.
 
   ```
 
 - Why does `log_event()` need to check `event_count` against `MAX_EVENTS` before writing, rather than trusting the array is always big enough?
   ```
-
+  We check event_count against MAX_EVENTS because the array can only hold 10 events. If we don't check and try to add more than 10 events, we could write outside the array and cause problems.
 
   ```
 
 - In `print_log()`, why does the loop condition need to be `i < event_count` rather than `i < MAX_EVENTS`?
   ```
-
+  Because MAX_EVENTS is the maximum number of events that the array can hold, which is 10, but we don't want to print all 10. We need to print event_count because they are the events that are actually used.
 
   ```
 
 - Why can't `delay()`-based code (from Week 4) be used anywhere in this program's `loop()`?
   ```
-
+  delay() is used in a simple program. Now since we are trying to use multiple components at the same time, using delay() will cause a lot of probelms becasue it will keep stopping/blocking the program each time the program goes through the code.
 
   ```
 
