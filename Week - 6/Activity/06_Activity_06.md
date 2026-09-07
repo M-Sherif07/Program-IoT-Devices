@@ -442,36 +442,36 @@ Answer these in your own words before moving on:
 
 1. What is the advantage of a `struct` record over two parallel arrays holding the same data, in terms of the bugs it makes impossible?
    ```
-  A struct prevents related data from being mismatched because the data is kept together in one record. It also makes the data easier to organise and manage.
+    A struct prevents related data from being mismatched because the data is kept together in one record. It also makes the data easier to organise and manage.
 
    ```
 
 2. Why does a struct definition need a trailing semicolon after its closing brace, when a function definition does not?
    ```
-  A struct needs a semicolon to tell the program that it is finished, and a struct declares a data type. For a function, the } is enough because it marks the end of the function's code.
+    A struct needs a semicolon to tell the program that it is finished, and a struct declares a data type. For a function, the } is enough because it marks the end of the function's code.
 
    ```
 
 3. Why is a linear search over a small key-value struct array an acceptable stand-in for a dictionary on a microcontroller, when it would not scale well for a table of thousands of entries?
    ```
-  Generally, microcontrollers have limited processing power and memory, which makes it less efficient to search through thousands of entries in a struct. A small struct array is acceptable because a linear search can quickly check a small number of entries. However, when there are thousands of entries, it becomes less efficient because the search may need to check many entries one by one.
+    Generally, microcontrollers have limited processing power and memory, which makes it less efficient to search through thousands of entries in a struct. A small struct array is acceptable because a linear search can quickly check a small number of entries. However, when there are thousands of entries, it becomes less efficient because the search may need to check many entries one by one.
 
    ```
 
 4. Why must a lookup function like `get_threshold()` return a sentinel value for "not found," and what must every caller do with that return value before using it?
    ```
-  Basically, this function is like a verification code. When the program doesn't find anything, it returns -1.0, meaning "not found." The caller should check for -1.0 before using the returned value.
+    Basically, this function is like a verification code. When the program doesn't find anything, it returns -1.0, meaning "not found." The caller should check for -1.0 before using the returned value.
 
    ```
 
 5. In an insertion sort performed on every new record, why does only the newly-inserted record ever need to move, rather than re-checking the whole array?
    ```
-  Because the data in the array is already sorted, we only need to move the newly added data into the correct position instead of rechecking the whole array.
+    Because the data in the array is already sorted, we only need to move the newly added data into the correct position instead of rechecking the whole array.
 
    ```
 
 6. Why can't two struct variables be compared directly with `==` in C++ the way two `int` variables can?
    ```
-  Because int is a simple value, while a struct contains multiple pieces of data, so the program doesn't know which one you are referring to unless you specify.
+    Because int is a simple value, while a struct contains multiple pieces of data, so the program doesn't know which one you are referring to unless you specify.
 
    ```
