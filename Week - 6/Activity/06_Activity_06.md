@@ -44,7 +44,10 @@ Define `struct Step { int pin; int duration; };` and declare `Step sequence[4] =
 
 >
 > Wokwi link: https://wokwi.com/projects/473652460611573761
-> 
+>
+
+**Finished Task: 1** https://wokwi.com/projects/474379429154736129
+
 **Check yourself:**
 - [ ] `Step` struct has exactly `pin` and `duration` fields, and the trailing semicolon after the struct definition is present
 - [ ] `sequence` is declared as an array of `Step`, not two parallel arrays
@@ -81,7 +84,10 @@ Define `struct Reading { String sensor; float value; String unit; };`. Declare `
 
 >
 > Wokwi link: https://wokwi.com/projects/473956741868447745
-> 
+>
+
+**Finished Task: 2** https://wokwi.com/projects/474383211506035713
+
 **Check yourself:**
 - [ ] `Reading` struct groups `sensor`, `value`, and `unit` together as named fields
 - [ ] A failed `isnan()` read is retried into the same slot, not counted as a stored reading
@@ -115,7 +121,10 @@ Reuse `struct Reading { String sensor; float value; String unit; };` from Task 2
 
 >
 > Wokwi link: https://wokwi.com/projects/473955613809115137
-> 
+>
+
+**Finished Task: 3** https://wokwi.com/projects/474389968221350913
+
 **Check yourself:**
 - [ ] `readings[]` is an array of `Reading` structs, each one built with `sensor`/`value`/`unit` set together
 - [ ] `minVal`/`maxVal` are initialised from `readings[0].value`, not `0`
@@ -153,6 +162,8 @@ Define `struct Reading { unsigned long timestamp; int value; };`. Declare `const
 
 >
 > Wokwi link: https://wokwi.com/projects/473961662656267265
+
+**Finished Task: 4** https://wokwi.com/projects/474391905982752769
 
 **Check yourself:**
 - [ ] Each button press (edge-detected) appends exactly one new record, guarded against exceeding `MAX_READINGS`
@@ -195,6 +206,8 @@ Define `struct Threshold { String sensor; float limit; };` and declare a `const 
 >
 > Wokwi link: https://wokwi.com/projects/473958323838595073
 
+**Finished Task: 5** https://wokwi.com/projects/474393356088030209
+
 **Check yourself:**
 - [ ] `Threshold` struct pairs a `String` key with a numeric `limit`
 - [ ] `get_threshold()` walks the array with a `for` loop comparing `.sensor` to the requested key
@@ -229,6 +242,8 @@ Define `struct Note { int frequency; int duration; };` and declare a `Note melod
 
 >
 > Wokwi link:  https://wokwi.com/projects/471515514429761537
+
+**Finished Task: 6** https://wokwi.com/projects/474393992043141121
 
 **Check yourself:**
 - [ ] `Note` struct groups `frequency` and `duration` together as one record
@@ -288,6 +303,8 @@ flowchart LR
 
 >
 > Wokwi link: https://wokwi.com/projects/473962280394557441
+
+**Finished Task: 7** https://wokwi.com/projects/474482163265042433
 
 **Check yourself:**
 - [ ] Every logged reading is one `Reading` struct appended and then insertion-sorted by timestamp, guarded against exceeding `MAX_READINGS`
@@ -425,36 +442,36 @@ Answer these in your own words before moving on:
 
 1. What is the advantage of a `struct` record over two parallel arrays holding the same data, in terms of the bugs it makes impossible?
    ```
-
+  A struct prevents related data from being mismatched because the data is kept together in one record. It also makes the data easier to organise and manage.
 
    ```
 
 2. Why does a struct definition need a trailing semicolon after its closing brace, when a function definition does not?
    ```
-
+  A struct needs a semicolon to tell the program that it is finished, and a struct declares a data type. For a function, the } is enough because it marks the end of the function's code.
 
    ```
 
 3. Why is a linear search over a small key-value struct array an acceptable stand-in for a dictionary on a microcontroller, when it would not scale well for a table of thousands of entries?
    ```
-
+  Generally, microcontrollers have limited processing power and memory, which makes it less efficient to search through thousands of entries in a struct. A small struct array is acceptable because a linear search can quickly check a small number of entries. However, when there are thousands of entries, it becomes less efficient because the search may need to check many entries one by one.
 
    ```
 
 4. Why must a lookup function like `get_threshold()` return a sentinel value for "not found," and what must every caller do with that return value before using it?
    ```
-
+  Basically, this function is like a verification code. When the program doesn't find anything, it returns -1.0, meaning "not found." The caller should check for -1.0 before using the returned value.
 
    ```
 
 5. In an insertion sort performed on every new record, why does only the newly-inserted record ever need to move, rather than re-checking the whole array?
    ```
-
+  Because the data in the array is already sorted, we only need to move the newly added data into the correct position instead of rechecking the whole array.
 
    ```
 
 6. Why can't two struct variables be compared directly with `==` in C++ the way two `int` variables can?
    ```
-
+  Because int is a simple value, while a struct contains multiple pieces of data, so the program doesn't know which one you are referring to unless you specify.
 
    ```
