@@ -66,42 +66,44 @@ flowchart LR
 
 >[!NOTE]
 > Wokwi Link : https://wokwi.com/projects/474638564592105473
-> 
+
+**Finished the Revision Task:** https://wokwi.com/projects/474652829837105153
+
 ### Questions
 
 - Why does `log_collection()` need to hold the newly-built `Collection` record in a temporary variable before the insertion loop, rather than writing straight into `collections[collection_count]` and shifting other records around it?
   ```
-
+   we need to save the new record in a temporary variable before shifting the previous records, otherwise the new record could be overwritten while repositioning them.
 
   ```
 
 - What would happen to the alert logic if `get_capacity()`'s sentinel return value were used directly in the fill-level comparison without first checking whether it was `-1`?
   ```
-
+   We first compare maxFill to -1 to verify that the capacity value is valid before proceeding. If we used -1 directly in the fill-level comparison, the fill level would always be greater than -1, making the condition true even when it shouldn't be. Therefore, we check that maxFill != -1 first, and -1 means the capacity was not found, so we stop.
 
   ```
 
 - Why does the PIR-triggered "unregistered dumping" alert need the `collectionJustLogged` flag, rather than just checking `if (motionDetected)` on its own?
   ```
-
+   Because motionDetected only tells us when the motion occurred, not whether a collection was logged. The collectionJustLogged flag checks whether a collection was recently logged before triggering the unregistered dumping alert.
 
   ```
 
 - The Collect button uses settle-time debouncing before a press is trusted. What would go wrong with the collection log if that debounce were removed?
   ```
-
+   If we didn't have debounce, the collection_count could become incorrect, and the collection data could be duplicated because one button press might be registered multiple times.
 
   ```
 
 - Why does `log_collection()` need to check `collection_count` against `MAX_COLLECTIONS` before writing, rather than trusting the array is always big enough?
   ```
-
+  Because when collection_count reaches MAX_COLLECTIONS, it prevents the program from going beyond the array and adding random or invalid data.
 
   ```
 
 - Identify every place in this program where `millis()`-based timing is used instead of `delay()`, and explain what would break in each case if `delay()` were used instead.
   ```
-
+   The buttons, alertActive, motionState, collection log, bin type, bin capacity, alert duration, collection window, and long-press detection basically all these need to have a certain time to stop, and the collection timestamp uses millis() to record the time. If we were to use delay(), we would end up stopping the whole program instead of 1 part of the code.
 
   ```
 
