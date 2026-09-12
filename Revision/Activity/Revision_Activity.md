@@ -685,7 +685,7 @@ Answer these in your own words before moving on:
 
 3. What do a missing debounce check, a missing array-bounds guard, and an unchecked sentinel value have in common as a class of bug?
    ```
-   The common connection between them is that all of them are validation checks to make sure no bugs or unwanted data are returned, or to prevent the program from doing something incorrectly.
+   The common connection between them is that all of them are missing validation checks to make sure no bugs or unwanted data are returned, or to prevent the program from doing something incorrectly.
 
    ```
 
