@@ -35,6 +35,8 @@ Write `void blink_led(int pin, int times, int onTime)` that flashes the given pi
 >[!NOTE]
 > Wokwi link: https://wokwi.com/projects/474460961380768769
 
+**Finished Task: 1** https://wokwi.com/projects/474836391266400257
+
 **Check yourself:**
 - [ ] `blink_led()` takes `pin`, `times`, and `onTime` as parameters — none of the three is hard-coded inside the function
 - [ ] Pin numbers are stored in named variables, not written as bare numbers at the call site
@@ -78,6 +80,8 @@ Implement settle-time debouncing using `lastButtonReading`, `buttonState`, and `
 
 >[!NOTE]
 > Wokwi link: https://wokwi.com/projects/474497117436855297
+
+**Finished Task: 2** https://wokwi.com/projects/474838320643817473
 
 **Check yourself:**
 - [ ] `lastButtonReading`/`buttonState`/`debounceStart` implement settle-time debouncing before any reading is trusted
@@ -132,6 +136,8 @@ Debounce the Select button using `lastButtonReading`/`buttonState`/`debounceStar
 
 >[!NOTE]
 > Wokwi link: https://wokwi.com/projects/474470208794608641
+
+**Finished Task: 3** https://wokwi.com/projects/474841333147184129
 
 **Check yourself:**
 - [ ] The Select button is debounced with `lastButtonReading`/`buttonState`/`debounceStart` before any press is trusted
@@ -196,6 +202,8 @@ Debounce the Call button using `lastButtonReading`/`buttonState`/`debounceStart`
 >[!NOTE]
 > Wokwi link: https://wokwi.com/projects/474487482790405121
 
+**Finished Task: 4** https://wokwi.com/projects/474842934931389441
+
 **Check yourself:**
 - [ ] The Call button is debounced with `lastButtonReading`/`buttonState`/`debounceStart` before any press is trusted
 - [ ] `currentFloor` advances by one per validated press and wraps from `3` back to `0` (four floors: 0-3)
@@ -245,6 +253,8 @@ Debounce the Grade button as in Task 2. On each validated press, advance `int gr
 
 >[!NOTE]
 > Wokwi link: https://wokwi.com/projects/474462085306563585
+
+**Finished Task: 5** https://wokwi.com/projects/474847185761091585
 
 **Check yourself:**
 - [ ] The Grade button is debounced before any press is trusted
@@ -299,6 +309,8 @@ Use the debounced button pattern from Task 2 to toggle a `bool locked` variable.
 >[!NOTE]
 > Wokwi link: https://wokwi.com/projects/474488112545664001
 
+**Finished Task: 6** https://wokwi.com/projects/474849085757353985
+
 **Check yourself:**
 - [ ] The alarm only triggers when `locked` is `true` **and** a fresh dock-removal edge is detected — a plain `if (dockNow)` alone is not enough
 - [ ] The alarm is timed with `millis()`, never `delay()`
@@ -334,6 +346,8 @@ Declare `const int NUM_READINGS = 10;` and `int readings[NUM_READINGS];`. In `se
 
 >[!NOTE]
 > Wokwi link: https://wokwi.com/projects/473955613809115137
+
+**Finished Task: 7** https://wokwi.com/projects/474850135921266689
 
 **Check yourself:**
 - [ ] `minVal`/`maxVal` are initialised from `readings[0]`, not `0`
@@ -390,6 +404,8 @@ Declare `const int NUM_BAYS = 4;` and `int bayPins[NUM_BAYS] = {4, 5, 6, 7};`. C
 >[!NOTE]
 > Wokwi link: https://wokwi.com/projects/473652460611573761
 
+**Finished Task: 8** https://wokwi.com/projects/474851277509402625
+
 **Check yourself:**
 - [ ] `bayPins[]` is declared once as an array — no pin number appears hard-coded anywhere else
 - [ ] `setup()` configures all four pins with a `for` loop over `bayPins`
@@ -436,6 +452,8 @@ Define `struct Checkin { unsigned long timestamp; int batteryLevel; };` and `str
 
 >[!NOTE]
 > Wokwi link: https://wokwi.com/projects/474488439674404865
+
+**Finished Task: 9** https://wokwi.com/projects/474854050372942849
 
 **Check yourself:**
 - [ ] The Return button is debounced (Task 2's pattern), and each validated press appends exactly one record
@@ -501,6 +519,8 @@ flowchart LR
 
 >[!NOTE]
 > Wokwi link: https://wokwi.com/projects/474488718561188865
+
+**Finished Task: 10** https://wokwi.com/projects/474943395153678337
 
 **Check yourself:**
 - [ ] Every check-in is one debounced press → one struct record → one insertion-sort step, guarded against overflowing `MAX_CHECKINS`
@@ -653,36 +673,36 @@ Answer these in your own words before moving on:
 
 1. When you read a new requirement you haven't seen phrased before, how do you decide which concept it's asking for? Give a concrete example of a phrase that would tip you off.
    ```
-
+   A way of understanding code from an English explanation is basically to translate the human language into code. For example, "The system must continue responding to the buttons while the alarm is active" shows that we have to use millis() so we do not let the program stop for one part of the code.
 
    ```
 
 2. Why does combining several inputs and outputs in one program make `delay()` a bug, when the exact same `delay()` was harmless in an earlier, single-component sketch?
    ```
-
+   Because delay() is normally used in simple projects because it doesn't matter whether it affects the other parts of the code, since a simple program doesn't have a lot of code running at the same time. While a complex project should use millis() so that when trying to time one part of the code, the whole program doesn't stop.
 
    ```
 
 3. What do a missing debounce check, a missing array-bounds guard, and an unchecked sentinel value have in common as a class of bug?
    ```
-
+   The common connection between them is that all of them are validation checks to make sure no bugs or unwanted data are returned, or to prevent the program from doing something incorrectly.
 
    ```
 
 4. Why does an array of structs remove an entire bug class that two parallel arrays are prone to?
    ```
-
+   An array struct is more flexible because you can use multiple types like int, string and float, and it also connects related data together so they belong to one item or thing.
 
    ```
 
 5. In Task 10, why must `compute_stats()` be called again after every new check-in, rather than once in `setup()`?
-   ```
-
+   ``` 
+   Because compute_stats() calculates the average, max, and min, it needs to be called after every new check-in because there can be up to 10 readings, and each new reading can change the average, max, and min results.
 
    ```
 
 6. Which concept do you feel least confident about, and what would you build to practice it specifically?
    ```
-
+   There are 3 concepts that seem a bit weird logically. Even though I understand them, they are still hard to remember how to write. The first is arrays, the second is struct, and the third is millis(). I am more confident with millis() than arrays and structs, so I would build a small project that uses arrays and structs to practise them.
 
    ```
