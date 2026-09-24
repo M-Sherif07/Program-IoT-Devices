@@ -1,4 +1,4 @@
-# Practice Assessment - Museum Display Case Night Guard
+#  Museum Display Case Night Guard
 
 ## Scenario
 A regional museum keeps a fragile manuscript in a sealed, dark display case overnight. Two sensors watch it:
