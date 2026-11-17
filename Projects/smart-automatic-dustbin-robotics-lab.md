@@ -3,7 +3,7 @@
 
 
 <p align="center">
-<img src="./image/smart_automatic_dustbin_engineering_infographic.png" alt ="" width =1000>
+<img src="../image/smart_automatic_dustbin_engineering_infographic.png" alt ="" width =1000>
 </p>
 
 ## Scenario
